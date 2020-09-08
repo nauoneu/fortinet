@@ -8,6 +8,7 @@ import logging
 import os
 import datetime
 import sys
+import time
 from pprint import pprint
 
 # global vars
@@ -41,6 +42,8 @@ def download_samples():
 
         with open(os.path.join(path, p), mode = "wb") as fh:
             fh.write(sample)
+
+        time.sleep(1)
 
 if __name__ == "__main__":
     download_samples()
