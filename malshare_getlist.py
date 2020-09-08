@@ -35,6 +35,9 @@ def download_samples():
     folder = datetime.date.today()
     path = f"files/{folder}"
     os.makedirs(path)
+    with open(os.path.join(path, list.json), mode = "wb") as fh:
+        fh.write(hashlist)
+
     for p in hashlist:
         md5hash = p['md5']
         getfile = {'action': 'getfile', 'api_key': api_key, 'hash': md5hash}
