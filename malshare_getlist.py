@@ -6,6 +6,7 @@ import argparse
 import json
 import logging
 import os
+import datetime
 import sys
 from pprint import pprint
 
@@ -31,21 +32,17 @@ def download_hashlist():
 
 def download_samples():
     hashlist = download_hashlist()
-    count = 0
+    folder = datetime.date.today()
+    path = f"files/{folder}"
+    os.makedirs(path)
     for p in hashlist:
-        if count < 1:
-            md5hash = p['md5']
-            getfile = {'action': 'getfile', 'api_key': api_key, 'hash': md5hash}
-            r = requests.get(url, params = getfile)
-            sample = r.content
+        md5hash = p['md5']
+        getfile = {'action': 'getfile', 'api_key': api_key, 'hash': md5hash}
+        r = requests.get(url, params = getfile)
+        sample = r.content
 
-            with open(os.path.join("files", md5hash), mode = "wb") as fh:
-                fh.write(sample)
-
-            count += 1
-
-        else:
-            return
+        with open(os.path.join(path, md5hash), mode = "wb") as fh:
+            fh.write(sample)
 
 if __name__ == "__main__":
     download_samples()
