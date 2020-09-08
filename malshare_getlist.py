@@ -35,7 +35,7 @@ def download_samples():
     folder = datetime.date.today()
     path = f"files/{folder}"
     os.makedirs(path)
-    with open(os.path.join(path, list.json), mode = "wb") as fh:
+    with open(os.path.join(path, list), mode = "wb") as fh:
         fh.write(hashlist)
 
     for p in hashlist:
