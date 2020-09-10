@@ -12,11 +12,11 @@ import time
 from pprint import pprint
 
 # global vars
-#api_key = "14b204a8ff4fdc3e6f0a7a0aee38446eb2d560c10d76bae2e8980043d5d628af"
-today = datetime.date.today()
-url = f"http://10.130.8.158/files/{today}"
-#getlist = {'action': 'getlist', 'api_key': api_key}
-path = f"files/{today}"
+homedir = "/home/tueno/files"
+now = datetime.datetime.now()
+folder = f"{now.year}-{now.month}-{now.day}-{now.hour}"
+path = f"{homedir}/{folder}"
+url = f"http://10.130.8.158/files/{folder}"
 
 def download_hashlist():
     try:
@@ -36,7 +36,7 @@ def download_samples():
 
     for p in hashlist:
 #        print(p)
-        rpath = f"http://10.130.8.158/files/{today}/{p}"
+        rpath = f"http://10.130.8.158/files/{folder}/{p}"
         r = requests.get(rpath)
         sample = r.content
 
