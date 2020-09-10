@@ -14,7 +14,8 @@ from pprint import pprint
 # global vars
 homedir = "/home/tueno/files"
 now = datetime.datetime.now()
-folder = f"{now.year}-{now.month}-{now.day}-{now.hour}"
+folder = now.strftime('%Y-%m-%d-%H')
+#folder = f"{now.year}-{now.month}-{now.day}-{now.hour}"
 path = f"{homedir}/{folder}"
 url = f"http://10.130.8.158/files/{folder}"
 

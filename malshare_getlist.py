@@ -15,8 +15,8 @@ api_key = "14b204a8ff4fdc3e6f0a7a0aee38446eb2d560c10d76bae2e8980043d5d628af"
 url = "https://malshare.com/api.php"
 getlist = {'action': 'getlist', 'api_key': api_key}
 now = datetime.datetime.now()
-#folder = datetime.date.today()
-folder = f"{now.year}-{now.month}-{now.day}-{now.hour}"
+folder = now.strftime('%Y-%m-%d-%H')
+#folder = f"{now.year}-{now.month}-{now.day}-{now.hour}"
 path = f"/var/www/html/files/{folder}"
 
 def download_hashlist():
