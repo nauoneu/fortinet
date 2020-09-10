@@ -37,7 +37,8 @@ def download_samples():
 
     for p in hashlist:
 #        print(p)
-        rpath = f"http://10.130.8.158/files/{folder}/{p}"
+#        rpath = f"http://10.130.8.158/files/{folder}/{p}"
+        rpath = f"{url}/{p}"
         r = requests.get(rpath)
         sample = r.content
 
