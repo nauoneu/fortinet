@@ -10,29 +10,25 @@ password = 'Fortinet123$'
 logstart  = "2020-10-20 13:00:00"
 logend = "2020-10-20 13:05:00"
 devid = 'All_FortiGate'
-devname = 'ftntosk_FG3H1E'
 logtype = 'virus'
 headers = {}
-debug = ""
 
 def fmglogin():
     urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
     req_url = 'https://' + host + '/jsonrpc'
     body = {'id': 1, 'params': [{'url': '/sys/login/user', 'data': {'user': user, 'passwd': password}}], 'method': 'exec'}
     r = requests.post(req_url, json=body, verify=False)
-    data = r.content
-    y = json.loads(data)
-    pprint(y["result"])
-    return y["session"]
+    data = r.json()
+#    pprint(data["result"])
+    return data["session"]
 
 def fmglogout(sessionid):
     urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
     req_url = 'https://' + host + '/jsonrpc'
     body = {'id': 1, 'params': [{'url': '/sys/logout', 'session': sessionid}], 'method': 'exec'}
     r = requests.post(req_url, json=body, verify=False)
-    data = r.content
-    y = json.loads(data)
-    pprint(y["result"])
+    data = r.json()
+#    pprint(data["result"])
 
 def logsearchreq(sessionid):
     urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
@@ -45,8 +41,7 @@ def logsearchreq(sessionid):
         "params": [{
             "apiver": 3,
             "device": [{
-                "devid": devid,
-                "devname": devname
+                "devid": devid
             }],
             "filter": "",
             "logtype": logtype,
@@ -61,10 +56,9 @@ def logsearchreq(sessionid):
     }
 
     try:
-        pprint(body)
+#        pprint(body)
         r = requests.post(req_url, json=body, headers=headers, verify=False)
         data = r.json()
-        pprint(data)
 #        pprint(data['result']['tid'])
         tid = data['result']['tid']
     except requests.exceptions.RequestException as e:
@@ -105,5 +99,5 @@ if  __name__ == "__main__":
     sessionid = fmglogin()
     tid = logsearchreq(sessionid)
     logdata = logsearchresult(sessionid, tid)
-#    pprint(logdata)
+    pprint(logdata)
     fmglogout(sessionid)
