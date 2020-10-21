@@ -3,63 +3,106 @@ import urllib3
 import json
 from pprint import pprint
 
+# global vars
+host = '10.130.8.4'
+user = 'apiuser'
+password = 'Fortinet123$'
+logstart  = "2020-10-20 10:00:00"
+logend = "2020-10-20 10:01:00"
+devid = 'All_FortiGate'
+devname = 'ftntosk_FG3H1E'
+#devname = 'ftntosk_FGT6HD'
+headers = {}
+debug = ""
+
 def fmglogin():
     urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-    ip = "10.130.8.4"
-    req_url = 'https://' + ip + '/jsonrpc'
-    body = {'id': 1, 'params': [{'url': '/sys/login/user', 'data': {'user': 'apiuser', 'passwd': 'Fortinet123$'}}], 'method': 'exec'}
+    req_url = 'https://' + host + '/jsonrpc'
+    body = {'id': 1, 'params': [{'url': '/sys/login/user', 'data': {'user': user, 'passwd': password}}], 'method': 'exec'}
     r = requests.post(req_url, json=body, verify=False)
     data = r.content
     y = json.loads(data)
-#    print(y["session"])
-#    return y["session"]
     pprint(y["result"])
     return y["session"]
 
 def fmglogout(sessionid):
     urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-    ip = "10.130.8.4"
-    req_url = 'https://' + ip + '/jsonrpc'
+    req_url = 'https://' + host + '/jsonrpc'
     body = {'id': 1, 'params': [{'url': '/sys/logout', 'session': sessionid}], 'method': 'exec'}
     r = requests.post(req_url, json=body, verify=False)
     data = r.content
     y = json.loads(data)
     pprint(y["result"])
 
-def address(sessionid):
+def logsearchreq(sessionid):
     urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-    ip = "10.130.8.4"
-    req_url = 'https://' + ip + '/jsonrpc'
+    req_url = 'https://' + host + '/jsonrpc'
     headers = {'Content-type': 'application/json'}
     body = {
-        "id": "string",
+        "id": "1",
         "jsonrpc": "2.0",
         "method": "add",
         "params": [{
             "apiver": 3,
-            "case-sensitive": false,
             "device": [{
-                "csfname": "Corp_SF",
-                "devid": "FGT60C0000000001[root]",
-                "devname": "FGT-vancouver[traffic]"
+                "devid": devid,
+                "devname": devname
             }],
-            "filter": "",
+           "filter": "",
             "logtype": "traffic",
             "time-order": "desc",
             "time-range": {
-                "end": "2019-07-03T17:16:35",
-                "start": "2019-07-02T17:16:35"
+                "start": logstart,
+                "end": logend
             },
             "url": "/logview/adom/root/logsearch"
         }],
         "session": sessionid
     }
-    r = requests.post(req_url, json=body, headers=headers, verify=False)
-    data = r.content
-    y = json.loads(data)
-    pprint(y["result"])
+
+    try:
+        pprint(body)
+        r = requests.post(req_url, json=body, headers=headers, verify=False)
+        data = r.json()
+#        pprint(data['result']['tid'])
+        tid = data['result']['tid']
+    except requests.exceptions.RequestException as e:
+        print(e, file=sys.stderr)
+        return
+    
+    return tid
+
+def logsearchresult(sessionid, tid):
+    urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+    req_url = 'https://' + host + '/jsonrpc'
+    headers = {'Content-type': 'application/json'}
+    body = {
+        "id": "string",
+        "jsonrpc": "2.0",
+        "method": "get",
+        "params": [{
+            "apiver": 3,
+            "limit": 50,
+            "offset": 0,
+            "url": f"/logview/adom/root/logsearch/{tid}"
+        }],
+        "session": sessionid
+    }
+
+    try:
+#        pprint(body)
+        r = requests.post(req_url, json=body, headers=headers, verify=False)
+        data = r.json()
+#        pprint(data)
+    except requests.exceptions.RequestException as e:
+        print(e, file=sys.stderr)
+        return
+    
+    return data
 
 if  __name__ == "__main__":
     sessionid = fmglogin()
-#    address(sessionid)
+    tid = logsearchreq(sessionid)
+    logdata = logsearchresult(sessionid, tid)
+    pprint(logdata)
     fmglogout(sessionid)
