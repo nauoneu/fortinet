@@ -4,11 +4,11 @@ import json
 from pprint import pprint
 
 # global vars
-host = '10.130.8.4' #FAZ IP address
+host = '10.130.8.157' #FAZ IP address
 user = 'apiuser'
 password = 'Fortinet123$'
-fromdate  = "2020-10-01 00:00:00"
-todate = "2020-10-21 00:00:00"
+fromdate  = "2021-02-01 00:00:00"
+todate = "2021-02-08 00:00:00"
 headers = {}
 
 def fmglogin():

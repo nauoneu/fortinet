@@ -122,7 +122,7 @@ def getfiledata(filelist):
 #        pprint(body)
         r = requests.post(req_url, json=body, headers=headers, verify=False)
         fileb64 = r.json()
-#        pprint(fileb64)
+        pprint(fileb64)
 
         if 'result' in fileb64:
 #            filebin = fileb64['result']['data']
