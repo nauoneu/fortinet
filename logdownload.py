@@ -1,6 +1,8 @@
 import requests
 import urllib3
 import json
+import base64
+import os
 from pprint import pprint
 from datetime import datetime
 
@@ -8,14 +10,15 @@ from datetime import datetime
 host = '10.130.8.157' #FAZ IP address
 user = 'apiuser'
 password = 'Fortinet123$'
-#user = 'admin'
-#password = 'fortinet'
-logstart = "2021-01-01 00:00:00"
-logend = "2021-02-06 00:00:00"
-#devid = 'All_FortiGate'
-devid = ''
-logtype = 'virus'
+# daily log rotate at 0:05
+logstart = "2021-02-07 00:00:00"
+logend = "2021-02-08 00:10:00"
 headers = {}
+homedir = "./files"
+#now = datetime.datetime.now()
+#folder = now.strftime('%Y-%m-%d-%H')
+folder = 'fazlog'
+path = f"{homedir}/{folder}"
 
 def fazlogin():
     urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
@@ -44,16 +47,12 @@ def getfilelist(sessionid):
         "method": "get",
         "params": [{
             "apiver": 3,
-            "devid": devid,
-            "filename": "",
-#            "devid": "FG5H1E5818903582",
-#            "filename": "tlog.1555569529.log.gz",
+            "devid": '',
+            "filename": '',
             "time-range": {
                 "end": logend,
                 "start": logstart
             },
-#            "limit": 50,
-#            "offset": 0,
             "url": f"/logview/adom/root/logfiles/state",
             "vdom": ""
         }],
@@ -69,7 +68,7 @@ def getfilelist(sessionid):
     filelist = []
     fileattrs = {}
     for i, j in enumerate(devlist):
-        deviceid = j['device-id']
+        devid = j['device-id']
         for key in j['vdom-file-list'][0]['logfile-list']:
 #            if key == 'tlog':
 #                print(key)
@@ -83,15 +82,15 @@ def getfilelist(sessionid):
                 logenddt = datetime.strptime(logend, '%Y-%m-%d %H:%M:%S')
 #                print('{0}:{1}'.format(k, l))
 #                if (logstartdt < starttime) and (logenddt > endtime):
-#                if (logstartdt < starttime) and (logenddt > endtime):
-                fileattrs["id"] = fileid
-                fileattrs["devid"] = deviceid
-                fileattrs["filename"] = filename
-                fileattrs["vdom"] = vdom
-                fileattrs_copy = fileattrs.copy()
-                filelist.append(fileattrs_copy)
-#                pprint(filelist)
-                fileid += 1
+                if (logstartdt < starttime) and (logenddt > endtime):
+                    fileattrs["id"] = fileid
+                    fileattrs["devid"] = devid
+                    fileattrs["filename"] = filename
+                    fileattrs["vdom"] = vdom
+                    fileattrs_copy = fileattrs.copy()
+                    filelist.append(fileattrs_copy)
+#                    pprint(filelist)
+                    fileid += 1
     
     return filelist
 
@@ -119,13 +118,20 @@ def getfiledata(filelist):
             }],
             "session": sessionid
         }
-    
-        pprint(body)
+
+#        pprint(body)
         r = requests.post(req_url, json=body, headers=headers, verify=False)
-        filedata = r.json()
-        print(filedata)
-        
-    return filedata
+        fileb64 = r.json()
+#        pprint(fileb64)
+
+        if 'result' in fileb64:
+#            filebin = fileb64['result']['data']
+            filebin = base64.b64decode(fileb64['result']['data'])
+#            print(filebin)
+            with open(os.path.join(path, filelist[i]['filename']), mode = "wb") as fh:
+                fh.write(filebin)
+
+    return fileb64
 
 if  __name__ == "__main__":
     sessionid = fazlogin()
