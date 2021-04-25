@@ -6,6 +6,7 @@ import argparse
 import json
 import logging
 import os
+import shutil
 import datetime
 import sys
 import time
@@ -27,7 +28,7 @@ def download_hashlist():
 #        print(url)
         r = requests.get(f"{url}/list")
 #        print(r.text)
-        os.removedirs(ppath)
+        shutil.rmtree(ppath)
         os.makedirs(path)
 
     except requests.exceptions.RequestException as e:
