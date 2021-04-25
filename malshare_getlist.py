@@ -6,6 +6,7 @@ import argparse
 import json
 import logging
 import os
+import shutil
 import datetime
 import sys
 from pprint import pprint
@@ -15,14 +16,18 @@ api_key = "put_your_key"
 url = "https://malshare.com/api.php"
 getlist = {'action': 'getlist', 'api_key': api_key}
 now = datetime.datetime.now()
+pdate = now - datetime.timedelta(days=14)
 folder = now.strftime('%Y-%m-%d-%H')
+pfolder = pdate.strftime('%Y-%m-%d-%H')
 #folder = f"{now.year}-{now.month}-{now.day}-{now.hour}"
 path = f"/var/www/html/files/{folder}"
+ppath = f"/var/www/html/files/{pfolder}"
 
 def download_hashlist():
     try:
         r = requests.get(url, params = getlist)
         data = r.json()
+        shutil.rmtree(ppath)
         os.makedirs(path)
         md5list = open(f"{path}/list", "w")
         for p in data:
