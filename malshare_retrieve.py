@@ -14,9 +14,12 @@ from pprint import pprint
 # global vars
 homedir = "/home/tueno/files"
 now = datetime.datetime.now()
+pdate = now - datetime.timedelta(days=14)
 folder = now.strftime('%Y-%m-%d-%H')
+pfoleder = pdate.strftime('%Y-%m-%d-%H')
 #folder = f"{now.year}-{now.month}-{now.day}-{now.hour}"
 path = f"{homedir}/{folder}"
+ppath = f"{homedir}/{pfolder}"
 url = f"http://10.130.8.158/files/{folder}"
 
 def download_hashlist():
@@ -24,6 +27,7 @@ def download_hashlist():
 #        print(url)
         r = requests.get(f"{url}/list")
 #        print(r.text)
+        os.removedirs(ppath)
         os.makedirs(path)
 
     except requests.exceptions.RequestException as e:
