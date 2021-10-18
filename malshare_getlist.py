@@ -12,7 +12,7 @@ import sys
 from pprint import pprint
 
 # global vars
-api_key = "put_your_key"
+api_key = "your_key"
 url = "https://malshare.com/api.php"
 getlist = {'action': 'getlist', 'api_key': api_key}
 now = datetime.datetime.now()
@@ -27,7 +27,7 @@ def download_hashlist():
     try:
         r = requests.get(url, params = getlist)
         data = r.json()
-        shutil.rmtree(ppath)
+        shutil.rmtree(ppath, ignore_errors=True)
         os.makedirs(path)
         md5list = open(f"{path}/list", "w")
         for p in data:
@@ -38,6 +38,10 @@ def download_hashlist():
     except requests.exceptions.RequestException as e:
         print(e, file=sys.stderr)
         return
+
+    except OSError as e:
+        print(e, file=sys.stderr)
+        pass
 
     return data
 
@@ -59,4 +63,5 @@ def download_samples():
 #    md5list.close()
 
 if __name__ == "__main__":
-    download_samples()
+#    download_samples()
+    download_hashlist()
