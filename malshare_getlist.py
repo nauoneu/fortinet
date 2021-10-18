@@ -63,5 +63,4 @@ def download_samples():
 #    md5list.close()
 
 if __name__ == "__main__":
-#    download_samples()
-    download_hashlist()
+    download_samples()
