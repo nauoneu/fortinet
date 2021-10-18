@@ -17,9 +17,9 @@ url = "https://malshare.com/api.php"
 getlist = {'action': 'getlist', 'api_key': api_key}
 now = datetime.datetime.now()
 pdate = now - datetime.timedelta(days=14)
+#folder = f"{now.year}-{now.month}-{now.day}-{now.hour}"
 folder = now.strftime('%Y-%m-%d-%H')
 pfolder = pdate.strftime('%Y-%m-%d-%H')
-#folder = f"{now.year}-{now.month}-{now.day}-{now.hour}"
 path = f"/var/www/html/files/{folder}"
 ppath = f"/var/www/html/files/{pfolder}"
 
