@@ -28,7 +28,7 @@ def download_hashlist():
 #        print(url)
         r = requests.get(f"{url}/list")
 #        print(r.text)
-        shutil.rmtree(ppath)
+        shutil.rmtree(ppath, ignore_errors=True)
         os.makedirs(path)
 
     except requests.exceptions.RequestException as e:
