@@ -58,12 +58,12 @@ if version['latest'] >= latestVersion:
     print(','.join(sorted(set([url for (category, url, tcpPorts, udpPorts) in flatUrls]))))
     m365urls = open(f"{listpath}/m365urls", "w")
     for sortedurl in sorted(set([url for (category, url, tcpPorts, udpPorts) in flatUrls])):
-        print(sortedurl)
+    #    print(sortedurl)
         m365urls.write(f"{sortedurl}\n")
     m365urls.close()
     m365ips = open(f"{listpath}/m365ips", "w")
     for sortedip in sorted(set([ip for (category, ip, tcpPorts, udpPorts) in flatIps])):
-        print(sortedip)
+    #    print(sortedip)
         m365ips.write(f"{sortedip}\n")
     m365ips.close()
 
